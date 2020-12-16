@@ -44,6 +44,7 @@ app.use(session({
 }));
 
 
+app.use(express.static('public'));
 
 app.use(logger);
 // Disabling for local development
