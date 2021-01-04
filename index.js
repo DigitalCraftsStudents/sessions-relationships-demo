@@ -10,12 +10,9 @@ const session = require('express-session');  // keeps track of unique users visi
 const FileStore = require('session-file-store')(session); // keep the session info in files on the server
 
 const {
-    homeController
-} = require('./controllers');
-
-const {
     userRouter,
-    todoRouter
+    todoRouter,
+    homeRouter
 } = require('./routers');
 
 const { requireLogin } = require('./auth')
@@ -53,7 +50,8 @@ app.use(logger);
 // Parse any form data from POST requests
 app.use(express.urlencoded({extended: true}));
 
-app.get('/', homeController.home);
+// Match `/` exactly
+app.use('/', homeRouter);
 
 app.get('/unauthorized', (req, res) => {
     console.log('----- so sad...not logged in ----')
@@ -66,7 +64,43 @@ app.use(requireLogin); // this middleware is protecting the rest
                        // of the routes that come after/below
                        // in index.js
 
-app.use('/todos', todoRouter)
+
+const { layout } = require('./utils');
+const { Todo } = require('./models');
+app.get('/todos/:id', async (req, res) => {
+    console.log(`The id of the todo to show is: ${req.params.id}`);
+    //res.send(req.params.id);
+    // get the specific todo
+    // from the database!
+    // .findByPk() will retrieve by the id ("primary key")
+    const todo = await Todo.findByPk(req.params.id);
+    console.log(todo.title);
+    res.render('todos/form', {
+        locals: {
+            title: 'Edit Todo',
+            todoTitle: todo.title
+        },
+        ...layout
+    })
+}); 
+app.post('/todos/:id', (req, res) => {
+
+});
+app.use('/todos', todoRouter);
+
+/* 
+in order to edit a todo:
+
+- show the user a form with the title of a specific todo
+    - what URL should they go to?
+        /todos/7
+        /todos/9
+        /todos/:id
+    - create a route
+    - create a controller function
+- when the user submits the form, change what's in the database for that specific todo
+*/
+
 
 // requireLogin() is a mini-middleware function
 // that runs before our (req, res) => {} handler
