@@ -78,13 +78,40 @@ app.get('/todos/:id', async (req, res) => {
     res.render('todos/form', {
         locals: {
             title: 'Edit Todo',
-            todoTitle: todo.title
+            todoTitle: todo.title,
+            isComplete: todo.isComplete
         },
         ...layout
     })
 }); 
-app.post('/todos/:id', (req, res) => {
+app.post('/todos/:id', async (req, res) => {
+    const { title, isComplete } = req.body;
+    const { id } = req.params;
 
+    console.log('is it done yet??????');
+    console.log(isComplete);
+
+    let newIsComplete = false;
+    if (isComplete) {
+        newIsComplete = true;
+    }
+
+    // Pass .update() two arguments:
+    // 1. what attributes to change
+    // 2. which Todo to change
+    const updatedTodo = await Todo.update({
+        // key/value pairs to change
+        title,
+        isComplete: newIsComplete
+    }, {
+        // a where-clause that says *which* Todo to update
+        where: {
+            id
+        }
+    });
+
+    //res.send(`new info: ${title}`);
+    res.redirect('/todos')
 });
 app.use('/todos', todoRouter);
 

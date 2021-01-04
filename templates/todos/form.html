@@ -4,7 +4,18 @@ ${header}
   <label>
     Title:
     <input name="title" type="text" autofocus value="${todoTitle}" />
+
   </label>
+  <br>
+  <label>
+    Done:
+    <input type="checkbox" name="isComplete" value="done"
+    ${ isComplete ? 'checked' : '' }
+    >
+  </label>
+    
+  <br>
+
  <input type="submit" value="do it!" />
 </form>
 ${footer}

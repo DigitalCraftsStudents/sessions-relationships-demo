@@ -5,6 +5,13 @@ ${header}
 <a href="/todos/new">Add Todo</a>
 
 <ul>
-  ${todos.map(t => `<li>${t.title}</li>`).join('')}
+  ${todos.map(t => `
+    <li>
+      <a href="/todos/${t.id}">
+        ${t.title}
+      </a>
+
+    </li>
+    `).join('')}
   </ul>
 ${footer}
