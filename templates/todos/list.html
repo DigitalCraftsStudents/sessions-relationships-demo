@@ -3,12 +3,20 @@ ${header}
 <a href="/members-only">Back</a>
 <br>
 <a href="/todos/new">Add Todo</a>
-
+<!-- <script src="https://googleads.com/?uid=asdfasdfasdf"></script> -->
 <ul>
   ${todos.map(t => `
     <li>
+      <input type="checkbox"
+        disabled
+        ${ t.isComplete ? 'checked' : ''}
+      >
+      ${t.title}
       <a href="/todos/${t.id}">
-        ${t.title}
+        Edit
+      </a>
+      <a href="/todos/${t.id}/delete">
+        Delete
       </a>
 
     </li>

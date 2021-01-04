@@ -67,6 +67,9 @@ app.use(requireLogin); // this middleware is protecting the rest
 
 const { layout } = require('./utils');
 const { Todo } = require('./models');
+const { reset } = require('nodemon');
+
+// Code for UPDATING todos
 app.get('/todos/:id', async (req, res) => {
     console.log(`The id of the todo to show is: ${req.params.id}`);
     //res.send(req.params.id);
@@ -113,6 +116,39 @@ app.post('/todos/:id', async (req, res) => {
     //res.send(`new info: ${title}`);
     res.redirect('/todos')
 });
+
+// Code for DELETING todos
+app.get('/todos/:id/delete', async (req, res) => {
+    // show them the delete form
+    // get the id from req.params
+    const { id } = req.params;
+    // get the Todo from the database
+    const todo = await Todo.findByPk(id);
+    // render the delete form, showing the title
+    // res.send(`You want to delete ${todo.title}`);
+    res.render('todos/delete', {
+        locals: {
+            title: 'Delete Todo',
+            todoTitle: todo.title
+        },
+        ...layout
+    });
+});
+app.post('/todos/:id/delete', async (req, res) => {
+    // process the delete form
+    const { id } = req.params;
+    // res.send('you are going to delete it...');
+    // delete from the database
+    const deletedTodo = await Todo.destroy({
+        where: {
+            id
+        }
+    });
+    console.log(deletedTodo);
+    res.redirect('/todos');
+})
+
+
 app.use('/todos', todoRouter);
 
 /* 
